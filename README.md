@@ -17,9 +17,13 @@ State Management: Optimized client-side state handling using React Hooks (useSta
 Frontend:
 
 Framework:	Next.js (App Router)
+
 Language:	TypeScript
+
 Styling:	Tailwind CSS
+
 Routing:	next/navigation (useRouter)
+
 API Client:	Axios 
 
 
