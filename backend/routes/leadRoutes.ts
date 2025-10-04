@@ -1,0 +1,14 @@
+import {Router} from "express";
+import {createLead, getAllLeads, getSearchedLead, getLeadById, updateLead, removeLead} from "../controllers/leadController.js";
+import { checkAccess } from "../middlerware/checkAccess.js";
+
+const router = Router();
+
+router.post("/", checkAccess('lead.create', 'lead'), createLead);
+router.get("/", getAllLeads);
+router.get('/search', getSearchedLead)
+router.get("/:id", checkAccess('lead.view', 'lead'), getLeadById);
+router.put("/:id", checkAccess('lead.update', 'lead'), updateLead);
+router.delete("/:id", removeLead);
+
+export default router;

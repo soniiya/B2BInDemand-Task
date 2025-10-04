@@ -1,0 +1,18 @@
+// /backend/tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist", 
+    "rootDir": "./",     
+    "esModuleInterop": true,
+    "experimentalDecorators": true, 
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["**/*.ts"], 
+  "exclude": ["node_modules", "dist"]
+}
