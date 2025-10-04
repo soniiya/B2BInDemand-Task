@@ -14,7 +14,7 @@ State Management: Optimized client-side state handling using React Hooks (useSta
 
 # Tech Stack: 
 
-Frontend:
+# Frontend:
 
 Framework:	Next.js (App Router)
 
@@ -27,12 +27,16 @@ Routing:	next/navigation (useRouter)
 API Client:	Axios 
 
 
-Backend:
+# Backend:
 
 Runtime: 	    Node.js
+
 Framework:	    Express.js
+
 Database:	    MongoDB (NoSQL)
+
 ODM: 	        Mongoose
+
 Development:	Nodemon (Auto-reloading)
 
 
