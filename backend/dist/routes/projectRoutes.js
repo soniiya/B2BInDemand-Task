@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { createProject, getAllProjects, getSearchedProject, getProjectById, updateProject, removeProject } from "../controllers/projectController.js";
+import { checkAccess } from "../middlerware/checkAccess.js";
+const router = Router();
+router.post("/", checkAccess('project.create', 'project'), createProject);
+router.get("/", getAllProjects);
+router.get('/search', getSearchedProject);
+router.get("/:id", getProjectById);
+router.put("/:id", updateProject);
+router.delete("/:id", removeProject);
+export default router;

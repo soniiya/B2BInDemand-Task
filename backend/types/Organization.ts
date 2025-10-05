@@ -1,7 +1,8 @@
+import { Types } from 'mongoose';
 import { OrgStatusType } from './Common.js';
 
 export interface OrganizationType {
-  id: number;
+  organization_id: Types.ObjectId;
   name: string;
   domain: string;
   status: OrgStatusType;

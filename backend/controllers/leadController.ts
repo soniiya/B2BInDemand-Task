@@ -1,11 +1,20 @@
 import * as leadService from "../services/leadService.js";
 import { Task } from "../models/TaskModel.js"; 
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../types/User.js";
 
-export const createLead = async (req: Request, res: Response) => {
+export const createLead = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const ownerId = req.user?.userId;
+    if (!ownerId) {
+      return res.status(401).json({ error: "Authentication data missing." });
+    }
     const {data} = req.body;
-    const lead = await leadService.createLeadService(data);
+    const leadPayload = {
+      ...data,
+      owner_id: ownerId
+    };
+    const lead = await leadService.createLeadService(leadPayload);
     res.status(201).json(lead);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
@@ -15,7 +24,6 @@ export const createLead = async (req: Request, res: Response) => {
 
 export const getAllLeads = async (req: Request, res: Response) => {
   try {
-    // 💡 Service call to get ALL leads (maybe with simple pagination limits)
     const leads = await leadService.getAllLeadService(); 
     res.json(leads);
   } catch (err: any) {

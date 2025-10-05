@@ -1,7 +1,7 @@
 import { Lead } from "../models/LeadModel.js";
 
-export const createLeadService = async (data: any) => {
-  return await Lead.create(data);
+export const createLeadService = async (leadPayload: any) => {
+  return await Lead.create(leadPayload);
 };
 
 export const getAllLeadService = async () => {

@@ -1,18 +1,42 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../types/User.js'; 
 import { getRecord } from '../utils/getRecord.js';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import dotenv from 'dotenv'
 
-export const checkAccess = (requiredPermission: string, resourceType: 'lead' | 'project' | 'task') => 
+dotenv.config();
+
+export interface CustomJwtPayload extends JwtPayload {
+    userId: string;
+    roleName: string;
+    permissions: string[];
+}
+
+export const checkAccess = (requiredPermission: string, resourceType: 'lead' | 'project') => 
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const jwt_secret = process.env.JWT_SECRET   
+     if(!jwt_secret) throw Error("jwt token not present")
+     
+    const token = req.cookies.jwt || req.headers['authorization']?.split(' ')[1];
 
-    const user = req.user;
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
+    }
+    const decoded = jwt.verify(token, jwt_secret);
+
+    if (typeof decoded === 'string') {
+        return res.status(401).json({ message: 'Invalid token payload.' });
+    }
+
+    const user = decoded as CustomJwtPayload;
+
+    req.user = user;
+
     const recordId = req.params.id; 
 
     if (!user) {
         return res.status(401).json({ message: 'Authentication required.' });
     }
-
-    console.log("user role", user.roleName)
     
     if (user.roleName === 'SuperAdmin') {
         return next();

@@ -1,10 +1,10 @@
+import { Types } from "mongoose";
 import { UserStatusType } from "./Common.js";
 import { OrganizationType } from "./Organization.js";
 import { Request } from 'express';
 
 export interface AuthPayload {
     userId: string;
-    orgId: string;
     roleName: string; 
     permissions: string[]; 
 }
@@ -16,15 +16,14 @@ export interface AuthenticatedRequest extends Request {
 export type PermissionKey = string; 
 
 export interface RoleType {
-    _id: number;
+    _id: Types.ObjectId;
     name: string; 
     permissions: PermissionKey[]; 
 }
 
 export interface UserType {
-    _id: number; 
-    organization_id: number; 
-    role_id: string;       
+    _id: Types.ObjectId; 
+    role_id: Types.ObjectId;       
     
     name: string;
     email: string;
@@ -39,7 +38,6 @@ export interface UserType {
 }
 
 export interface UserTypeSignUpPayload {
-  orgId: number;
   name: string;
   email: string;
   password: string; 

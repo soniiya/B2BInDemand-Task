@@ -1,10 +1,20 @@
 import * as projectService from "../services/projectService.js";
 import { Task } from "../models/TaskModel.js"; 
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../types/User.js";
 
-export const createProject = async (req: Request, res: Response) => {
+
+export const createProject = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const project = await projectService.createProjectService(req.body);
+    const ownerId = req.user?.userId;
+    if (!ownerId) {
+      return res.status(401).json({ error: "Authentication data missing." });
+    }
+    const projectPayload = {
+      ...req.body,
+      owner_id: ownerId
+    };
+    const project = await projectService.createProjectService(projectPayload);
     res.status(201).json(project);
   } catch (err: any) {
     res.status(400).json({ error: err.message });

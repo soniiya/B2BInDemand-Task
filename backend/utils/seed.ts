@@ -1,3 +1,7 @@
+import mongoose from 'mongoose';
+import { Role } from '../models/RoleSchema.js';
+import { connectDB } from '../dbConfig.js';
+
 const defaultRoles = [
     {
         name: 'SuperAdmin',
@@ -23,3 +27,26 @@ const defaultRoles = [
         is_admin: false
     },
 ];
+
+
+async function seedRoles() {
+    await connectDB(); 
+
+    try {
+        console.log('Starting role seeding...');
+        const result = await Role.insertMany(defaultRoles, { ordered: false }); 
+        
+        console.log(`Successfully seeded ${result.length} roles.`);
+
+    } catch (error: any) {
+        if (error.code === 11000) { 
+             console.log("Roles already exist in the database. Seeding skipped.");
+        } else {
+             console.error("Error during role seeding:", error);
+        }
+    } finally {
+        mongoose.connection.close();
+    }
+}
+
+seedRoles();

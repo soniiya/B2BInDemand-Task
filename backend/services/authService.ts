@@ -3,13 +3,16 @@ import { Role } from '../models/RoleSchema.js';
 import { UserType, RoleType } from '../types/User.js';
 import bcrypt from 'bcrypt';
 
-export type PopulatedUser = Omit<UserType, 'role_id'> & { role_id: RoleType };
+type UserWithoutRefs = Omit<UserType, "role_id">;
+
+export interface PopulatedUser extends UserWithoutRefs {
+    role_id: RoleType; 
+}
 
 interface SignUpPayload { email: string; password: string; name: string; }
 
-export const signUp = async (payload: SignUpPayload): Promise<UserType | null> => {
+export const signUp = async (payload: SignUpPayload): Promise<PopulatedUser | null> => {
     const { email, password, name } = payload;
-    const organizationId = "ORG_ID";
 
     try {
         const existingUser = await User.findOne({ email });
@@ -21,24 +24,26 @@ export const signUp = async (payload: SignUpPayload): Promise<UserType | null> =
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        // const superAdminRole = await Role.findOne({ name: 'SuperAdmin' });
+        const superAdminRole = await Role.findOne({ name: 'SuperAdmin' });
 
-        // if (!superAdminRole) {
-        // throw new Error("Default role 'SuperAdmin' not found.");
-        // }
+        if (!superAdminRole) {
+        throw new Error("Default role 'SuperAdmin' not found.");
+        }
 
         const newUser = new User({
             name,
             email,
             passwordHash: passwordHash, 
-            organization_id: organizationId,
-            role_id: 'superAdmin'
+            role_id: superAdminRole._id
         });
         
         const savedUser = await newUser.save();
-        return savedUser;
-
-    } catch (error) {
+        await savedUser.populate([
+        { path: 'role_id', select: 'name permissions' }
+        ]);
+        return savedUser as unknown as PopulatedUser
+    } 
+    catch (error) {
         console.error('MongoDB error during user sign up:', error);
         throw new Error('Failed to create user account.');
     }
@@ -59,7 +64,6 @@ export const getUserByEmailWithHash = async (email: string): Promise<PopulatedUs
 
 
 export const updateLastLogin = async (user: PopulatedUser): Promise<void> => {
-    console.log("called")
     try {
         const userDoc = await User.findById(user._id);
         if (userDoc) {

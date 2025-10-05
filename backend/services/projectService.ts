@@ -1,7 +1,7 @@
 import { Project } from "../models/ProjectModel.js";
 
-export const createProjectService = async (data: any) => {
-  return await Project.create(data);
+export const createProjectService = async (projectPayload: any) => {
+  return await Project.create(projectPayload);
 };
 
 export const getAllProjectsService = async () => {
