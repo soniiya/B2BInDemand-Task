@@ -37,13 +37,6 @@ export default function TasksPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<TaskType | null>(null);
 
-  // const getsearchedTasks = async () => {
-  //   const query = new URLSearchParams(filters as any).toString();
-  //   const res = await fetchSearchedTask(query);
-  //   const data = await res.json();
-  //   setTasks(data);
-  // };
-
   const getAllTasks = useCallback(async () => {
     try {
       const res = await fetchAllTasks();

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LoginData, SignUpData, CreateProjectType, CreateLeadType, CreateTaskType } from "./type";
+import { LoginData, SignUpData, CreateProjectType, CreateLeadType, CreateTaskType, CreateOrgType } from "./type";
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -233,9 +233,31 @@ export const deleteTask = async (id: string) => {
 
 //orgs
 
+export const createOrg = async ( data: CreateOrgType) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/orgs`, { data }, 
+            { withCredentials: true }
+        );  
+        return response.data;
+    } catch (error) {
+        console.error("Create Lead error:", error);
+    }
+};
+
+export const fetchOrgById = async (id: string) => {
+    try{
+       const response = await axios.get(`${API_BASE_URL}/orgs/${id}`, { withCredentials: true });  
+       console.log("api response", response.data)
+       return response.data; 
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 export const fetchAllOrgs = async () => {
     try{
-       const response = await axios.get(`${API_BASE_URL}/org`, { withCredentials: true });  
+       const response = await axios.get(`${API_BASE_URL}/orgs`, { withCredentials: true });  
        return response.data; 
     }
     catch(err){
@@ -245,7 +267,7 @@ export const fetchAllOrgs = async () => {
 
 export const updateOrg = async (id: string, data: any) => {
     try {
-        const response = await axios.put(`${API_BASE_URL}/org/${id}`, { ...data }, { withCredentials: true });  
+        const response = await axios.put(`${API_BASE_URL}/orgs/${id}`, { ...data }, { withCredentials: true });  
         return response.data;
     } catch (error) {
         console.error("Create Task error:", error);

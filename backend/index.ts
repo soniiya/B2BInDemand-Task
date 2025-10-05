@@ -31,7 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/tasks', taskRoutes);
-app.use('/api/org', organizationRoutes);
+app.use('/api/orgs', organizationRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

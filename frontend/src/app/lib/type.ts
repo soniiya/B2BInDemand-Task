@@ -77,3 +77,17 @@ export type CreateTaskType = {
     status: TaskStatus,
     priority: TaskPriority,
 }
+
+export type OrgStatusType = 'active' | 'inactive';
+
+export type OrgType = {
+    _id?: string,
+    name: string,
+    status: OrgStatusType,
+    client: string
+}
+export type CreateOrgType = {
+  name: string,
+  domain: string,
+  status: OrgStatusType
+}

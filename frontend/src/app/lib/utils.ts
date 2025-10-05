@@ -5,15 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type orgStatus = "active" | "inactive"
-
-export type OrgType = {
-    _id?: string,
-    name: string,
-    status: orgStatus,
-    client: string
-}
-
 export const Organizations = [
   { _id: "org1", name: "Organization One", status: "pending", client: "client1" },
   { _id: "org2", name: "Organization Two", status: "done", client: "client2" },
