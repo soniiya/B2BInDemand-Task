@@ -99,9 +99,6 @@ npm run dev
 This image shows the main dashboard after login.
 
 
-![Main Dashboard View](screenshots/unauthorize.png)
-
-This image shows Unauthorized acces to Dashboard.
 
 
 ![Main Dashboard View](screenshots/task.png)
