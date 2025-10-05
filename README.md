@@ -93,21 +93,7 @@ Bash
 npm run dev
 
 
-# Screenshots
 
-![Main Dashboard View](screenshots/login.png)
-
-This image shows the main dashboard after login.
-
-
-![Main Dashboard View](screenshots/unauthorize.png)
-
-This image shows Unauthorized acces to Dashboard.
-
-
-![Main Dashboard View](screenshots/task.png)
-
-Create Tasks/Projects/Leads if user is authenticated and autherized.
 
 
 "Thank you so much"
