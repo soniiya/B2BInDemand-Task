@@ -72,7 +72,9 @@ cd ..
 Create a file named .env in the root of your project and add the following variables.
 
 PORT=5000
+
 MONGO_URI="mongodb://localhost:27017/b2bindemand"
+
 JWT_SECRET="JWT_SECRET_KEY"
 
 # 4. Run the Application
