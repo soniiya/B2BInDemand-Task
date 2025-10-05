@@ -29,7 +29,6 @@ const Login = () => {
 
   const onSubmit = async (data: IUserLoginPayload) => {
     setMessage("");
-    console.log(data);
 
     try {
       const res = await login(data);

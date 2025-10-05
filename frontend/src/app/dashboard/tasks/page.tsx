@@ -47,7 +47,6 @@ export default function TasksPage() {
   const getAllTasks = useCallback(async () => {
     try {
       const res = await fetchAllTasks();
-      console.log("res", res)
       setTasks(res);
     } catch (error) {
       console.error("Failed to fetch Tasks:", error);

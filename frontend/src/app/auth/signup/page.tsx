@@ -34,7 +34,6 @@ const SignUp = () => {
   const [message, setMessage] = useState("");
 
   const onSubmit = async (data: UserSignUpPayload) => {
-    console.log(data);
 
     try {
       const res = await signup(data);

@@ -60,7 +60,6 @@ export default function Projects() {
     }
     const res = await createProject(selectedOrg, newProject);
     setNewProject(res);
-    console.log("projects", newProject);
     fetchAllProjects();
   };
 
@@ -69,7 +68,6 @@ export default function Projects() {
     const projectData = res.project;
     setEditingProject(projectData);
     setEditingId(id);
-    console.log("sd", editingProject);
   };
 
   const handleUpdateProject = async () => {

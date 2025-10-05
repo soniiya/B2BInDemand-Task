@@ -51,7 +51,6 @@ export default function LeadsPage() {
   const getAllLeads = useCallback(async () => {
     try {
       const res = await fetchAllLeads();
-      console.log('fetchLeads' ,res)
       setLeads(res);
     } catch (error) {
       console.error("Failed to fetch Leads:", error);
@@ -64,9 +63,7 @@ export default function LeadsPage() {
 
   const handlecreateLead = async () => {
     const res = await createLead(newLead);
-    console.log(res);
     setNewLead(res);
-    console.log("Leads", newLead);
     fetchAllLeads();
   };
 
