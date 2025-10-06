@@ -21,7 +21,7 @@ import {
 } from "../../lib/utils";
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [filters, setFilters] = useState({
     title: "",
     status: "",
@@ -52,8 +52,12 @@ export default function TasksPage() {
 
   const handlecreateTask = async () => {
     const res = await createTask(newTask);
-    setNewTask(res);
-    fetchAllTasks();
+    setTasks((prev) => [res, ...prev])
+    setNewTask({title: "",
+    description: "",
+    priority: "medium",
+    status: "todo",});
+    alert("Task created")
   };
 
   const handleEdit = async (id: string) => {
@@ -73,7 +77,13 @@ export default function TasksPage() {
         priority: editingTask.priority,
       };
 
-      await updateTask(editingId, payload);
+      const updatedTask = await updateTask(editingId, payload);
+
+      setTasks(prev => 
+                prev.map(task => 
+                    task._id === editingId ? updatedTask : task
+                )
+      );
 
       setEditingId(null);
       setEditingTask(null);
@@ -90,7 +100,7 @@ export default function TasksPage() {
     }
     try {
       await deleteTask(id);
-      fetchAllTasks();
+      setTasks((prev) => prev.filter(task => task._id !== id))
       setEditingId(null);
       setEditingTask(null);
     } catch (error) {

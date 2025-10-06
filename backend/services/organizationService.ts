@@ -1,6 +1,6 @@
 import { Organization } from "../models/OrganizationModel.js";
 
-export const createTaskService = async (data: any) => {
+export const createOrgService = async (data: any) => {
   return await Organization.create(data)
 }
 
@@ -14,4 +14,8 @@ export const getOrgByIdService = async (id: string) => {
 
 export const updateOrgService = async (orgId: string, data: any) => {
  return await Organization.findByIdAndUpdate(orgId, data, { new: true });
+}
+
+export const removeOrgService = async (orgId: string) => {
+return await Organization.findByIdAndDelete(orgId)
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { FolderKanban, Users, CheckSquare, TrendingUp, LucideIcon } from 'lucide-react';
-import { fetchAllLeads, fetchAllTasks, fetchAllProjects } from '@/app/lib/api'; 
+import { fetchAllLeads, fetchAllTasks, fetchAllProjects, fetchAllOrgs } from '@/app/lib/api'; 
 
 export type StatItem = {
     name: string;
@@ -23,6 +23,7 @@ type MetricsData = {
     leads: any[];
     projects: any[];
     tasks: any[];
+    orgs: any[]
 }
 
 export const useDashboardMetrics = () => {
@@ -32,16 +33,18 @@ export const useDashboardMetrics = () => {
     const fetchMetrics = useCallback(async () => {
         setIsLoading(true);
         try {
-            const [leadsRes, projectsRes, tasksRes] = await Promise.all([
+            const [leadsRes, projectsRes, tasksRes, orgRes] = await Promise.all([
                 fetchAllLeads(),
                 fetchAllProjects(),
                 fetchAllTasks(),
+                fetchAllOrgs()
             ]);
 
             const combinedData: MetricsData = {
                 leads: leadsRes,
                 projects: projectsRes,
                 tasks: tasksRes,
+                orgs: orgRes
             };
 
             setData(combinedData);
@@ -65,6 +68,7 @@ export const useDashboardMetrics = () => {
         const totalLeadsCount = data.leads.length;
         const activeProjectsCount = data.projects.filter(p => p.status === 'active').length;
         const tasksTodayCount = data.tasks.filter(t => t.status === 'todo').length;
+        const activeOrgs = data.orgs.filter(t => t.status === 'active').length;
 
         const totalLeadsStat: StatItem = {
             name: "Total Leads",
@@ -90,7 +94,15 @@ export const useDashboardMetrics = () => {
             color: "text-success",
         };
 
-        const stats = [totalLeadsStat, activeProjectsStat, tasksTodayStat].sort((a, b) => a.name.localeCompare(b.name));
+        const activeOrgsStat: StatItem = {
+            name: "Active Organizations",
+            value: activeOrgs.toString(),
+            change: getRandomChange(), 
+            icon: FolderKanban,
+            color: "text-accent",
+        };
+
+        const stats = [totalLeadsStat, activeProjectsStat, tasksTodayStat, activeOrgsStat].sort((a, b) => a.name.localeCompare(b.name));
         
         const recentLeads = data.leads
             .slice(0, 5) 

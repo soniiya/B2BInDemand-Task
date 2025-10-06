@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createOrg, fetchAllOrgs, fetchOrgById, updateOrg } from "../../lib/api";
+import {
+  createOrg,
+  fetchAllOrgs,
+  fetchOrgById,
+  updateOrg,
+  deleteOrg,
+} from "../../lib/api";
 import {
   Organizations as organizations,
   getStatusColor,
@@ -35,8 +41,9 @@ export default function Orgs() {
 
   const handlecreateOrg = async () => {
     const res = await createOrg(newOrg);
-    setNewOrg(res);
-    fetchAllOrgs();
+    setOrgs((prev) => [res, ...prev]);
+    setNewOrg({ name: "", domain: "", status: "active" });
+    alert("organization created");
   };
 
   // const handleEdit = (id: string) => {
@@ -49,12 +56,11 @@ export default function Orgs() {
   //   }
   // };
 
-   const handleEdit = async (id: string) => {
-      const res = await fetchOrgById(id);
-      const projectData = res.project;
-      setEditingOrg(projectData);
-      setEditingId(id);
-    };
+  const handleEdit = async (id: string) => {
+    const res = await fetchOrgById(id);
+    setEditingOrg(res);
+    setEditingId(id);
+  };
 
   const handleUpdateOrg = async () => {
     if (!editingId || !editingOrg) return;
@@ -63,17 +69,35 @@ export default function Orgs() {
       const payload = {
         name: editingOrg.name,
         status: editingOrg.status,
-        client: editingOrg.client,
+        domain: editingOrg.domain,
       };
 
-      await updateOrg(editingId, payload);
+      // console.log(payload);
+
+      const updatedOrgs = await updateOrg(editingId, payload);
+
+      setOrgs((prev) =>
+        prev.map((org) => (org._id === editingId ? updatedOrgs : org))
+      );
 
       setEditingId(null);
       setEditingOrg(null);
-
-      fetchAllOrgs();
     } catch (error) {
       console.error("Failed to update Org:", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this Org?")) {
+      return;
+    }
+    try {
+      await deleteOrg(id);
+      setOrgs((prev) => prev.filter((org) => org._id !== id));
+      setEditingId(null);
+      setEditingOrg(null);
+    } catch (error) {
+      console.error("Failed to delete Org:", error);
     }
   };
 
@@ -96,7 +120,9 @@ export default function Orgs() {
               <input
                 placeholder="Org Domian"
                 value={newOrg.domain}
-                onChange={(e) => setNewOrg({ ...newOrg, domain: e.target.value })}
+                onChange={(e) =>
+                  setNewOrg({ ...newOrg, domain: e.target.value })
+                }
                 className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm"
                 suppressHydrationWarning={true}
               />
@@ -142,6 +168,12 @@ export default function Orgs() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  Domain
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Status
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -171,6 +203,40 @@ export default function Orgs() {
                           className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full md:w-auto"
                         />
 
+                        <input
+                          placeholder="Org Domian"
+                          value={editingOrg?.domain}
+                          onChange={(e) => {
+                            if (editingOrg) {
+                              setEditingOrg({
+                                ...editingOrg,
+                                domain: e.target.value,
+                              });
+                            }
+                          }}
+                          className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm"
+                          suppressHydrationWarning={true}
+                        />
+
+                        <div className="relative">
+                          <select
+                            suppressHydrationWarning={true}
+                            value={editingOrg?.status}
+                            onChange={(e) => {
+                              if (editingOrg) {
+                                setEditingOrg({
+                                  ...editingOrg,
+                                  status: e.target.value as OrgStatusType,
+                                });
+                              }
+                            }}
+                            className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm"
+                          >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                          </select>
+                        </div>
+
                         <button
                           onClick={handleUpdateOrg}
                           className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition duration-150"
@@ -193,6 +259,12 @@ export default function Orgs() {
                         </div>
                       </td>
 
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {p.domain}
+                        </div>
+                      </td>
+
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-3 py-1 inline-flex text-xs Orging-5 font-semibold rounded-full ${getStatusColor(
@@ -210,6 +282,12 @@ export default function Orgs() {
                             className="text-indigo-600 hover:text-indigo-900 transition duration-150 font-semibold"
                           >
                             Update
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p._id)}
+                            className="text-red-600 hover:text-red-900 transition duration-150 font-semibold"
+                          >
+                            Delete
                           </button>
                         </div>
                       </td>

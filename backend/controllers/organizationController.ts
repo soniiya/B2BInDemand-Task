@@ -4,8 +4,8 @@ import { Request, Response } from "express";
 export const createOrganizations = async (req: Request, res: Response) => {
   try {
       const {data} = req.body
-      const task = await organizationService.createTaskService(data);
-      res.status(201).json(task);
+      const newOrg = await organizationService.createOrgService(data);
+      res.status(201).json(newOrg);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
@@ -43,3 +43,15 @@ export const updateOrganization = async (req: Request, res: Response) => {
         res.status(400).json({ error: err.message });
     }
 }
+
+export const removeOrg = async (req: Request, res: Response) => {
+  try {
+    const Org = await organizationService.removeOrgService(req.params.id);
+    if (!Org) {
+      return res.status(404).json({ error: "Org not found" });
+    }
+    res.json(Org);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+};

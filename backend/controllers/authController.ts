@@ -48,53 +48,6 @@ export const signupController = async (req: Request, res: Response): Promise<voi
     }
 };
 
-// export const loginController = async (req: Request, res: Response): Promise<void> => {
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//         res.status(400).json({ message: 'Missing required fields: email, password.' });
-//         return;
-//     }
-
-//     try {
-//         const user = await getUserByEmailWithHash(email);
-
-//         if (!user) {
-//             res.status(401).json({ message: 'Invalid email or password.' });
-//             return;
-//         }
-        
-//         const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-
-//         if (!isPasswordValid) {
-//             res.status(401).json({ message: 'Invalid email or password.' });
-//             return;
-//         }
-
-        
-//         updateLastLogin(user);
-
-//         const jwtPayload = {
-//             userId: user._id.toString(),
-//             role: [user.role] 
-//         };
-//         issueTokenAndSetCookie(res, jwtPayload as any);
-
-//         res.status(200).json({
-//             message: 'Login successful.',
-//             user: {
-//                 id: user._id,
-//                 email: user.email,
-//                 role: user.role
-//             }
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({ message: (error as Error).message || 'Internal server error during login.' });
-//     }
-// };
-
-
 export const loginController = async (req: Request, res: Response): Promise<void> => {
     const { email, password } = req.body;
 
@@ -121,6 +74,7 @@ export const loginController = async (req: Request, res: Response): Promise<void
         updateLastLogin(user);
 
         const userRole: RoleType = user.role_id; 
+        console.log("user role", userRole)
 
         const jwtPayload = {
             userId: user._id.toString(),

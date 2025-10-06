@@ -24,9 +24,12 @@ export const signUp = async (payload: SignUpPayload): Promise<PopulatedUser | nu
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        const superAdminRole = await Role.findOne({ name: 'SuperAdmin' });
+        // const superAdminRole = await Role.findOne({ name: 'SuperAdmin' });
+        const AdminRole = await Role.findOne({ name: "Admin" });
 
-        if (!superAdminRole) {
+        console.log("role", AdminRole)
+
+        if (!AdminRole) {
         throw new Error("Default role 'SuperAdmin' not found.");
         }
 
@@ -34,7 +37,7 @@ export const signUp = async (payload: SignUpPayload): Promise<PopulatedUser | nu
             name,
             email,
             passwordHash: passwordHash, 
-            role_id: superAdminRole._id
+            role_id: AdminRole._id
         });
         
         const savedUser = await newUser.save();

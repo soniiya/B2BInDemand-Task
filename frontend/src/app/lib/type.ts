@@ -84,10 +84,10 @@ export type OrgType = {
     _id?: string,
     name: string,
     status: OrgStatusType,
-    client: string
+    domain: string
 }
 export type CreateOrgType = {
   name: string,
-  domain: string,
   status: OrgStatusType
+  domain: string,
 }

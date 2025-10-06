@@ -16,7 +16,7 @@ import {
 } from "../../lib/utils";
 
 export default function Projects() {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<ProjectType[]>([]);
   const [filters, setFilters] = useState({
     name: "",
     status: "",
@@ -59,8 +59,10 @@ export default function Projects() {
       return;
     }
     const res = await createProject(selectedOrg, newProject);
-    setNewProject(res);
-    fetchAllProjects();
+    setProjects((prev) => [res, ...prev])
+    setNewProject({ name: "",
+    status: "pending",});
+    alert("project created successfully")
   };
 
   const handleEdit = async (id: string) => {
@@ -80,12 +82,16 @@ export default function Projects() {
         client: editingProject.client,
       };
 
-      await updateProject(editingId, payload);
+      const updatedProject = await updateProject(editingId, payload);
+
+      setProjects(prev => 
+                prev.map(project => 
+                    project._id === editingId ? updatedProject : project
+                )
+      );
 
       setEditingId(null);
       setEditingProject(null);
-
-      fetchAllProjects();
     } catch (error) {
       console.error("Failed to update project:", error);
     }
@@ -97,7 +103,7 @@ export default function Projects() {
     }
     try {
       await deleteProject(id);
-      fetchAllProjects();
+      setProjects((prev) => prev.filter(project => project._id !== id))
       setEditingId(null);
       setEditingProject(null);
     } catch (error) {

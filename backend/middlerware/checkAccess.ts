@@ -31,13 +31,14 @@ export const checkAccess = (requiredPermission: string, resourceType: 'lead' | '
     const user = decoded as CustomJwtPayload;
 
     req.user = user;
+    console.log("middleware user", user)
+    console.log("rolename", user.roleName)
 
     const recordId = req.params.id; 
 
     if (!user) {
         return res.status(401).json({ message: 'Authentication required.' });
-    }
-    
+    }    
     if (user.roleName === 'SuperAdmin') {
         return next();
     }

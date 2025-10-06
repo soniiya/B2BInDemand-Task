@@ -4,7 +4,7 @@ import {Header} from "@/app/components/Header/page";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-full flex min-h-screen bg-gray-100">
+    <div className="w-full flex min-h-screen">
       <Sidebar />
       <main className="flex-1 p-6">
         <Header />

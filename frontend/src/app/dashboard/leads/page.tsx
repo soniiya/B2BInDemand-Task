@@ -21,7 +21,7 @@ import {
 } from "../../lib/utils";
 
 export default function LeadsPage() {
-  const [Leads, setLeads] = useState([]);
+  const [Leads, setLeads] = useState<LeadType[]>([]);
   const [filters, setFilters] = useState({
     name: "",
     status: "",
@@ -62,9 +62,18 @@ export default function LeadsPage() {
   }, [getAllLeads]);
 
   const handlecreateLead = async () => {
-    const res = await createLead(newLead);
-    setNewLead(res);
-    fetchAllLeads();
+    const createdLead = await createLead(newLead);
+    setLeads(prev => [createdLead, ...prev]);
+    setNewLead({
+    title: "",
+    company: "",
+    contact_name: "",
+    email: "",
+    phone: "",
+    source: "web",
+    status: "new",
+  });
+    alert("Lead created successfully!");
   };
 
   const handleEdit = async (id: string) => {
@@ -87,12 +96,17 @@ export default function LeadsPage() {
         status: editingLead.status,
       };
 
-      await updateLead(editingId, payload);
+      const updatedLead = await updateLead(editingId, payload);
+
+      setLeads(prevLeads => 
+                prevLeads.map(lead => 
+                    lead._id === editingId ? updatedLead : lead
+                )
+      );
+      alert("Lead updated successfully!");
 
       setEditingId(null);
       setEditingLead(null);
-
-      fetchAllLeads();
     } catch (error) {
       console.error("Failed to update Lead:", error);
     }
@@ -104,7 +118,9 @@ export default function LeadsPage() {
     }
     try {
       await deleteLead(id);
-      fetchAllLeads();
+      setLeads(prevLeads => 
+          prevLeads.filter(lead => lead._id !== id)
+      );
       setEditingId(null);
       setEditingLead(null);
     } catch (error) {

@@ -47,9 +47,9 @@ export default function Dashboard() {
                 ))}
                 
                 {/* Optional: Add a placeholder box if you only fetch 3 stats but want 4 columns */}
-                <div className="rounded-xl border border-dashed bg-gray-50 flex items-center justify-center p-4">
+                {/* <div className="rounded-xl border border-dashed bg-gray-50 flex items-center justify-center p-4">
                     <p className="text-sm text-gray-500">More metrics coming soon!</p>
-                </div>
+                </div> */}
             </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

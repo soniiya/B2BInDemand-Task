@@ -85,7 +85,7 @@ Bash
 
 npm run dev
 
-5. Start the Frontend Application
+# 5. Start the Frontend Application
 Run this command from the root directory.
 
 Bash
