@@ -268,7 +268,6 @@ export const fetchAllOrgs = async () => {
 export const updateOrg = async (id: string, data: CreateOrgType) => {
     try {
         const response = await axios.put(`${API_BASE_URL}/orgs/${id}`, { ...data }, { withCredentials: true }); 
-        // console.log("updated org", response.data)
         return response.data;
     } catch (error) {
         console.error("Create Task error:", error);

@@ -72,8 +72,6 @@ export default function Orgs() {
         domain: editingOrg.domain,
       };
 
-      // console.log(payload);
-
       const updatedOrgs = await updateOrg(editingId, payload);
 
       setOrgs((prev) =>

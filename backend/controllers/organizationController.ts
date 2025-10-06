@@ -38,7 +38,7 @@ export const updateOrganization = async (req: Request, res: Response) => {
         if (!orgs) {
           return res.status(404).json({ error: "Organization not found" });
         }
-        res.json();
+        res.json(orgs);
     } catch (err: any) {
         res.status(400).json({ error: err.message });
     }
