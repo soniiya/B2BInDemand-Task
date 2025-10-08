@@ -1,12 +1,36 @@
 import { Project } from "../models/ProjectModel.js";
+import { PaginatedResult } from "../types/Common.js";
+
 
 export const createProjectService = async (projectPayload: any) => {
   return await Project.create(projectPayload);
 };
 
-export const getAllProjectsService = async () => {
-  return await Project.find()
-}
+// export const getAllProjectsService = async () => {
+//   return await Project.find()
+// }
+
+export const getAllProjectsService = async (page: number, pageSize: number): Promise<PaginatedResult<any>> => {
+    const skip = (page - 1) * pageSize;
+
+    const total = await Project.countDocuments({});
+
+    const projects = await Project.find({})
+        .limit(pageSize) 
+        .skip(skip)      
+        .sort({ createdAt: -1 }); 
+
+    const totalPages = Math.ceil(total / pageSize);
+
+     console.log("prorojectss", projects)
+    return {
+        data: projects,
+        page: page,
+        page_size: pageSize,
+        total: total,
+        total_pages: totalPages,
+    };
+};
 
 export const removeProjectService = async (id: string) => {
   return await Project.findByIdAndDelete(id)
@@ -19,19 +43,27 @@ export const removeProjectService = async (id: string) => {
 export const listProjectsService = async (filters: any) => {
   const query: Record<string, any> = {};
 
-  if (filters.status) {
-    query.status = filters.status;
+  const status = filters.status.trim();  
+  if (status.length > 0) {
+    query.status = status;
+    query.status = status.toLowerCase();
   }
-  if (filters.name) {
-    query.name = { $regex: filters.name, $options: "i" };
+
+  const name = filters.name.trim()
+  if (name.length > 0) {
+    query.name = { $regex: name, $options: "i" };
   }
   if (filters.updatedAfter || filters.updatedBefore) {
     query.updatedAt = {};
-    if (filters.updatedAfter) {
-      query.updatedAt.$gte = new Date(filters.updatedAfter);
+
+    const updatedAfterStr = String(filters.updatedAfter).trim();
+    if (updatedAfterStr) {
+      query.updatedAt.$gte = new Date(updatedAfterStr);
     }
-    if (filters.updatedBefore) {
-      query.updatedAt.$lte = new Date(filters.updatedBefore);
+
+    const updatedBeforeStr = String(filters.updatedBefore).trim();
+    if (updatedBeforeStr) {
+      query.updatedAt.$lte = new Date(updatedBeforeStr);
     }
   }
 

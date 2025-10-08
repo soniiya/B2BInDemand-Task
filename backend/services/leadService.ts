@@ -4,8 +4,27 @@ export const createLeadService = async (leadPayload: any) => {
   return await Lead.create(leadPayload);
 };
 
-export const getAllLeadService = async () => {
-  return await Lead.find()
+export const getAllLeadService = async (page: number, pageSize: number) => {
+  //return await Lead.find()
+
+  const skip = (page - 1) * pageSize;
+  
+      const total = await Lead.countDocuments({});
+  
+      const leads = await Lead.find({})
+          .limit(pageSize) 
+          .skip(skip)      
+          .sort({ createdAt: -1 }); 
+  
+      const totalPages = Math.ceil(total / pageSize);
+  
+      return {
+          data: leads,
+          page: page,
+          page_size: pageSize,
+          total: total,
+          total_pages: totalPages,
+      };
 }
 
 export const removeLeadService = async (id: string) => {
@@ -28,8 +47,13 @@ export const getSearchedLeadService = async (filters: any) => {
   if (filters.status) {
     query.status = filters.status;
   }
-  if (filters.name) {
-    query.name = { $regex: filters.name, $options: "i" };
+
+   if (filters.source) {
+    query.source = filters.source;
+  }
+
+  if (filters.owner) {
+    query.name = { $regex: filters.owner, $options: "i" };
   }
   if (filters.updatedAfter || filters.updatedBefore) {
     query.updatedAt = {};

@@ -14,15 +14,20 @@ import {
   Organizations as organizations,
   getStatusColor,
 } from "../../lib/utils";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "@/app/components/Pagination/page";
 
 export default function Projects() {
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+  //const [projects, setProjects] = useState<ProjectType[]>([]);
   const [filters, setFilters] = useState({
     name: "",
     status: "",
     updatedAfter: "",
     updatedBefore: "",
   });
+  const [searchResults, setSearchResults] = useState<ProjectType[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const [newProject, setNewProject] = useState<CreateProjectType>({
     name: "",
     status: "pending",
@@ -33,36 +38,38 @@ export default function Projects() {
   );
   const [selectedOrg, setSelectedOrg] = useState("");
 
+  const {
+    data: paginatedProjects,
+    refetch,
+    pagination,
+    isLoading,
+    handlePageChange,
+  } = usePagination(fetchAllProjects);
+
   const getsearchedProjects = async () => {
-    const query = new URLSearchParams(filters as any).toString();
-    const res = await fetchSearchedProject(query);
-    const data = await res.json();
-    setProjects(data);
+    // const query = new URLSearchParams(filters as any).toString();
+    const data = await fetchSearchedProject(filters);
+    setSearchResults(data);
+    setIsSearching(true);
+    // setProjects(data);
+    refetch()
   };
 
-  const getAllProjects = useCallback(async () => {
-    try {
-      const res = await fetchAllProjects();
-      setProjects(res);
-    } catch (error) {
-      console.error("Failed to fetch projects:", error);
-    }
-  }, [setProjects]);
-
-  useEffect(() => {
-    getAllProjects();
-  }, [getAllProjects]);
+  const displayProjects = isSearching ? searchResults : paginatedProjects;
 
   const handlecreateProject = async () => {
     if (!selectedOrg) {
       alert("Please select an organization");
       return;
     }
-    const res = await createProject(selectedOrg, newProject);
-    setProjects((prev) => [res, ...prev])
-    setNewProject({ name: "",
-    status: "pending",});
-    alert("project created successfully")
+
+    try {
+      await createProject(selectedOrg, newProject);
+      refetch();
+      //handlePageChange(1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleEdit = async (id: string) => {
@@ -70,6 +77,7 @@ export default function Projects() {
     const projectData = res.project;
     setEditingProject(projectData);
     setEditingId(id);
+    refetch();
   };
 
   const handleUpdateProject = async () => {
@@ -82,13 +90,13 @@ export default function Projects() {
         client: editingProject.client,
       };
 
-      const updatedProject = await updateProject(editingId, payload);
-
-      setProjects(prev => 
-                prev.map(project => 
-                    project._id === editingId ? updatedProject : project
-                )
-      );
+      await updateProject(editingId, payload);
+      refetch();
+      // setProjects(prev =>
+      //           prev.map(project =>
+      //               project._id === editingId ? updatedProject : project
+      //           )
+      // );
 
       setEditingId(null);
       setEditingProject(null);
@@ -103,9 +111,9 @@ export default function Projects() {
     }
     try {
       await deleteProject(id);
-      setProjects((prev) => prev.filter(project => project._id !== id))
-      setEditingId(null);
-      setEditingProject(null);
+      refetch();
+      // setEditingId(null);
+      // setEditingProject(null);
     } catch (error) {
       console.error("Failed to delete project:", error);
     }
@@ -185,44 +193,44 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* <div className="flex flex-wrap items-center space-x-4 border-b pb-4">
-                <input
-                    placeholder="Filter by name"
-                    value={filters.name}
-                    onChange={(e) => setFilters({ ...filters, name: e.target.value })}
-                    className="p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <select
-                    value={filters.status}
-                    onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                    className="p-3 border rounded-xl"
-                >
-                    <option value="">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                </select>
-                <input
-                    type="date"
-                    onChange={(e) =>
-                        setFilters({ ...filters, updatedAfter: e.target.value })
-                    }
-                    className="p-3 border rounded-xl"
-                />
-                <input
-                    type="date"
-                    onChange={(e) =>
-                        setFilters({ ...filters, updatedBefore: e.target.value })
-                    }
-                    className="p-3 border rounded-xl"
-                />
-                <button
-                    onClick={getsearchedProjects}
-                    className="bg-green-600 p-3 rounded-xl text-white font-medium cursor-pointer hover:bg-green-700 transition"
-                >
-                    Apply Filters
-                </button>
-            </div> */}
+        <div className="flex flex-wrap items-center space-x-4 border-b pb-4">
+          <input
+            placeholder="Filter by name"
+            value={filters.name}
+            onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+            className="p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            className="p-3 border rounded-xl"
+          >
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+          </select>
+          <input
+            type="date"
+            onChange={(e) =>
+              setFilters({ ...filters, updatedAfter: e.target.value })
+            }
+            className="p-3 border rounded-xl"
+          />
+          <input
+            type="date"
+            onChange={(e) =>
+              setFilters({ ...filters, updatedBefore: e.target.value })
+            }
+            className="p-3 border rounded-xl"
+          />
+          <button
+            onClick={getsearchedProjects}
+            className="bg-green-600 p-3 rounded-xl text-white font-medium cursor-pointer hover:bg-green-700 transition"
+          >
+            Apply Filters
+          </button>
+        </div>
 
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
@@ -246,7 +254,7 @@ export default function Projects() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {projects?.map((p: any) => (
+              {displayProjects?.map((p: any) => (
                 <tr
                   key={p._id}
                   className="hover:bg-indigo-50 transition duration-150"
@@ -280,10 +288,10 @@ export default function Projects() {
                           }}
                           className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         >
-                          <option value="new">New</option>
-                          <option value="qualified">Qualified</option>
-                          <option value="won">Won</option>
-                          <option value="lost">Lost</option>
+                          <option value="">All</option>
+                          <option value="pending">Pending</option>
+                          <option value="active">Active</option>
+                          <option value="completed">Completed</option>
                         </select>
                         <button
                           onClick={handleUpdateProject}
@@ -339,6 +347,15 @@ export default function Projects() {
               ))}
             </tbody>
           </table>
+
+          <Pagination
+            page={pagination.page}
+            pageSize={pagination.page_size}
+            total={pagination.total}
+            totalPages={pagination.total_pages}
+            onPageChange={handlePageChange}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </>

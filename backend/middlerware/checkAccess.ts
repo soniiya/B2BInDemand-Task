@@ -12,9 +12,10 @@ export interface CustomJwtPayload extends JwtPayload {
     permissions: string[];
 }
 
-export const checkAccess = (requiredPermission: string, resourceType: 'lead' | 'project') => 
-    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const jwt_secret = process.env.JWT_SECRET   
+const jwt_secret = process.env.JWT_SECRET  
+
+export const checkAccess = (requiredPermission: string, resourceType: 'lead' | 'project'| 'task') => 
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => { 
      if(!jwt_secret) throw Error("jwt token not present")
      
     const token = req.cookies.jwt || req.headers['authorization']?.split(' ')[1];
@@ -71,3 +72,30 @@ export const checkAccess = (requiredPermission: string, resourceType: 'lead' | '
     next();
 };
 
+
+export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const token = req.cookies.jwt || req.headers['authorization']?.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
+    }
+
+    if(!jwt_secret) throw Error("jwt token not present")
+    
+    try {
+        const decoded = jwt.verify(token, jwt_secret)
+        const user = decoded as CustomJwtPayload;
+        req.user = user;
+        next();
+        
+    } catch (error: any) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Session expired. Please log in again.', code: 'TOKEN_EXPIRED' });
+        }
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token. Access denied.', code: 'INVALID_TOKEN' });
+        }
+        
+        return res.status(401).json({ message: 'Authentication failed.', code: 'AUTH_FAILED' });
+    }
+};

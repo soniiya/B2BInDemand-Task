@@ -19,15 +19,19 @@ import {
   Organizations as organizations,
   getStatusColor,
 } from "../../lib/utils";
+import { usePagination } from "@/app/hooks/usePagination";
+import Pagination from "@/app/components/Pagination/page";
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [filters, setFilters] = useState({
     title: "",
     status: "",
     updatedAfter: "",
     updatedBefore: "",
   });
+   const [searchResults, setSearchResults] = useState<TaskType[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+
   const [newTask, setNewTask] = useState<CreateTaskType>({
     title: "",
     description: "",
@@ -37,26 +41,34 @@ export default function TasksPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<TaskType | null>(null);
 
-  const getAllTasks = useCallback(async () => {
-    try {
-      const res = await fetchAllTasks();
-      setTasks(res);
-    } catch (error) {
-      console.error("Failed to fetch Tasks:", error);
-    }
-  }, [setTasks]);
+   const {
+      data: paginatedTasks,
+      refetch,
+      pagination,
+      isLoading,
+      handlePageChange,
+    } = usePagination(fetchAllTasks);
 
-  useEffect(() => {
-    getAllTasks();
-  }, [getAllTasks]);
+    console.log("paginated tasks" ,paginatedTasks)
+    const displayTasks = isSearching ? searchResults : paginatedTasks;
+
+   const getsearchedProjects = async () => {
+      // const query = new URLSearchParams(filters as any).toString();
+      const data = await fetchSearchedTask(filters);
+      setSearchResults(data);
+      setIsSearching(true);
+      // setProjects(data);
+      refetch()
+    };
 
   const handlecreateTask = async () => {
     const res = await createTask(newTask);
-    setTasks((prev) => [res, ...prev])
-    setNewTask({title: "",
-    description: "",
-    priority: "medium",
-    status: "todo",});
+    //setTasks((prev) => [res, ...prev])
+    // setNewTask({title: "",
+    // description: "",
+    // priority: "medium",
+    // status: "todo",});
+    refetch()
     alert("Task created")
   };
 
@@ -64,6 +76,7 @@ export default function TasksPage() {
     const res = await fetchTaskById(id);
     setEditingTask(res);
     setEditingId(id);
+    refetch()
   };
 
   const handleUpdateTask = async () => {
@@ -79,16 +92,17 @@ export default function TasksPage() {
 
       const updatedTask = await updateTask(editingId, payload);
 
-      setTasks(prev => 
-                prev.map(task => 
-                    task._id === editingId ? updatedTask : task
-                )
-      );
+      // setTasks(prev => 
+      //           prev.map(task => 
+      //               task._id === editingId ? updatedTask : task
+      //           )
+      // );
+
+      refetch()
 
       setEditingId(null);
       setEditingTask(null);
 
-      fetchAllTasks();
     } catch (error) {
       console.error("Failed to update Task:", error);
     }
@@ -100,7 +114,8 @@ export default function TasksPage() {
     }
     try {
       await deleteTask(id);
-      setTasks((prev) => prev.filter(task => task._id !== id))
+      //setTasks((prev) => prev.filter(task => task._id !== id))
+      refetch()
       setEditingId(null);
       setEditingTask(null);
     } catch (error) {
@@ -221,7 +236,7 @@ export default function TasksPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {tasks?.map((p: any) => (
+              {displayTasks?.map((p: any) => (
                 <tr
                   key={p._id}
                   className="hover:bg-indigo-50 transition duration-150"
@@ -340,6 +355,16 @@ export default function TasksPage() {
               ))}
             </tbody>
           </table>
+
+           <Pagination
+            page={pagination.page}
+            pageSize={pagination.page_size}
+            total={pagination.total}
+            totalPages={pagination.total_pages}
+            onPageChange={handlePageChange}
+            isLoading={isLoading}
+          />
+
         </div>
       </div>
     </>

@@ -9,7 +9,7 @@ const jwt_secret = process.env.JWT_SECRET
 export const issueTokenAndSetCookie = (res: Response, payload: JwtPayload): string => {
   if(!jwt_secret) throw "jwt token not present"
 
-  const token = jwt.sign(payload, jwt_secret, { expiresIn: '1h' });
+  const token = jwt.sign(payload, jwt_secret, { expiresIn: '5h' });
 
   res.cookie('jwt', token, {
     httpOnly: true, 

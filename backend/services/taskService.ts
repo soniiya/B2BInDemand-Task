@@ -1,12 +1,35 @@
 import { Task } from "../models/TaskModel.js";
+import { PaginatedResult } from "../types/Common.js";
 
 export const createTaskService = async (data: any) => {
   return await Task.create(data);
 };
 
-export const getAllTasksService = async () => {
-  return await Task.find()
-}
+// export const getAllTasksService = async () => {
+//   return await Task.find()
+// }
+
+export const getAllTasksService = async (page: number, pageSize: number): Promise<PaginatedResult<any>> => {
+    const skip = (page - 1) * pageSize;
+
+    const total = await Task.countDocuments({});
+
+    const tasks = await Task.find({})
+        .limit(pageSize) 
+        .skip(skip)      
+        .sort({ createdAt: -1 }); 
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    console.log("tasks", tasks)
+    return {
+        data: tasks,
+        page: page,
+        page_size: pageSize,
+        total: total,
+        total_pages: totalPages,
+    };
+};
 
 export const getTaskByIdService = async (id: string) => {
   return await Task.findById(id)

@@ -2,7 +2,24 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { FolderKanban, Users, CheckSquare, TrendingUp, LucideIcon } from 'lucide-react';
-import { fetchAllLeads, fetchAllTasks, fetchAllProjects, fetchAllOrgs } from '@/app/lib/api'; 
+import { 
+    fetchLeadsMetrics, 
+    fetchProjectsMetrics, 
+    fetchTasksMetrics, 
+    fetchOrgsMetrics 
+} from '../services/api';
+
+interface ResourceData<T> {
+    total: number;
+    data: T[];
+}
+
+interface CombinedMetrics {
+    leads: ResourceData<any>;
+    projects: ResourceData<any>;
+    tasks: ResourceData<any>;
+    orgs: ResourceData<any>;
+}
 
 export type StatItem = {
     name: string;
@@ -27,20 +44,20 @@ type MetricsData = {
 }
 
 export const useDashboardMetrics = () => {
-    const [data, setData] = useState<MetricsData | null>(null);
+    const [data, setData] = useState<CombinedMetrics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchMetrics = useCallback(async () => {
         setIsLoading(true);
         try {
             const [leadsRes, projectsRes, tasksRes, orgRes] = await Promise.all([
-                fetchAllLeads(),
-                fetchAllProjects(),
-                fetchAllTasks(),
-                fetchAllOrgs()
+                fetchLeadsMetrics(),
+                fetchProjectsMetrics(),
+                fetchTasksMetrics(),
+                fetchOrgsMetrics()
             ]);
 
-            const combinedData: MetricsData = {
+            const combinedData: CombinedMetrics = {
                 leads: leadsRes,
                 projects: projectsRes,
                 tasks: tasksRes,
@@ -65,10 +82,15 @@ export const useDashboardMetrics = () => {
         return { stats: [], recentLeads: [], recentTasks: [] }; 
         }
 
-        const totalLeadsCount = data.leads.length;
-        const activeProjectsCount = data.projects.filter(p => p.status === 'active').length;
-        const tasksTodayCount = data.tasks.filter(t => t.status === 'todo').length;
-        const activeOrgs = data.orgs.filter(t => t.status === 'active').length;
+        // const totalLeadsCount = data.leads.length;
+        // const activeProjectsCount = data.projects.filter(p => p.status === 'active').length;
+        // const tasksTodayCount = data.tasks.filter(t => t.status === 'todo').length;
+        // const activeOrgs = data.orgs.filter(t => t.status === 'active').length;
+
+        const totalLeadsCount = data.leads.total;
+        const activeProjectsCount = data.projects.data.filter(p => p.status === 'active').length;
+        const tasksTodayCount = data.tasks.data.filter(t => t.status === 'todo').length;
+        const activeOrgs = data.orgs.total; 
 
         const totalLeadsStat: StatItem = {
             name: "Total Leads",
@@ -104,8 +126,27 @@ export const useDashboardMetrics = () => {
 
         const stats = [totalLeadsStat, activeProjectsStat, tasksTodayStat, activeOrgsStat].sort((a, b) => a.name.localeCompare(b.name));
         
-        const recentLeads = data.leads
-            .slice(0, 5) 
+        // const recentLeads = data.leads
+        //     .slice(0, 5) 
+        //     .map(lead => ({
+        //         id: lead._id, 
+        //         title: lead.title || 'N/A',
+        //         company: lead.company,
+        //         status: lead.status,
+        //         owner: lead.owner,
+        //     }));
+
+        // const recentTasks = data.tasks
+        //     .slice(0, 5) 
+        //     .map(task => ({
+        //         id: task._id,
+        //         title: task.title,
+        //         project: task.project_name || 'General', 
+        //         priority: task.priority,
+        //         dueDate: task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A',
+        //     }));
+
+        const recentLeads = data.leads.data
             .map(lead => ({
                 id: lead._id, 
                 title: lead.title || 'N/A',
@@ -114,8 +155,7 @@ export const useDashboardMetrics = () => {
                 owner: lead.owner,
             }));
 
-        const recentTasks = data.tasks
-            .slice(0, 5) 
+        const recentTasks = data.tasks.data
             .map(task => ({
                 id: task._id,
                 title: task.title,

@@ -1,5 +1,4 @@
 import * as leadService from "../services/leadService.js";
-import { Task } from "../models/TaskModel.js"; 
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../types/User.js";
 
@@ -22,13 +21,30 @@ export const createLead = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 
+// export const getAllLeads = async (req: Request, res: Response) => {
+//   try {
+//     const leads = await leadService.getAllLeadService(); 
+//     res.json(leads);
+//   } catch (err: any) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
 export const getAllLeads = async (req: Request, res: Response) => {
-  try {
-    const leads = await leadService.getAllLeadService(); 
-    res.json(leads);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const pageSize = parseInt(req.query.page_size as string) || 25;
+
+        const safePage = Math.max(1, page);
+        const safePageSize = Math.max(1, pageSize);
+
+        const result = await leadService.getAllLeadService(safePage, safePageSize);
+
+        res.json(result);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
 };
 
 export const getSearchedLead = async (req: Request, res: Response) => {
@@ -42,8 +58,8 @@ export const getSearchedLead = async (req: Request, res: Response) => {
       updatedBefore: req.query.updatedBefore,
     };
 
-    const projects = await leadService.getSearchedLeadService(filters);
-    res.json(projects);
+    const Leads = await leadService.getSearchedLeadService(filters);
+    res.json(Leads);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

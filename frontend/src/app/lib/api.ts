@@ -18,7 +18,7 @@ export const login = async (payload: LoginData) => {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, payload, { withCredentials: true });
     return response.data;
     }
-    catch(error){
+    catch(error: any){
         console.error("Login error:", error);
     }
 };
@@ -40,18 +40,45 @@ export const createProject = async (orgId: string, projectData: CreateProjectTyp
     try {
         const response = await axios.post(`${API_BASE_URL}/projects`, { org_id: orgId, ...projectData }, { withCredentials: true });  
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error("Create Project error:", error);
     }
 };
 
-export const fetchAllProjects = async () => {
+// export const fetchAllProjects = async () => {
+//     try{
+//        const response = await axios.get(`${API_BASE_URL}/projects`, { withCredentials: true });  
+//        return response.data; 
+//     }
+//     catch(error: any){
+//          if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+//             alert(error.response.data.message);
+//             // Redirect or handle logout
+//         }
+//         console.log(error)
+//     }
+// }
+
+export const fetchAllProjects = async (page: number, pageSize: number) => {
     try{
-       const response = await axios.get(`${API_BASE_URL}/projects`, { withCredentials: true });  
+       const response = await axios.get(`${API_BASE_URL}/projects`, {
+        params: {
+                page: page,
+                page_size: pageSize,
+            },
+        withCredentials: true });  
        return response.data; 
     }
-    catch(err){
-        console.log(err)
+    catch(error: any){
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
+        console.log(error)
     }
 }
 
@@ -60,26 +87,42 @@ export const fetchProjectById = async (id: string) => {
        const response = await axios.get(`${API_BASE_URL}/projects/${id}`, { withCredentials: true });  
        return response.data; 
     }
-    catch(err){
-        console.log(err)
+    catch(error: any){
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
+        console.log(error)
     }
 }
 
 export const fetchSearchedProject = async (query: any) => {
-    try{
-       const response = await axios.get(`${API_BASE_URL}/projects/search/${query}`, { withCredentials: true });  
-       return response.data;
+    try {
+        const safeQuery = query && typeof query === 'object' ? query : {};
+        const response = await axios.get(`${API_BASE_URL}/projects/search`, {
+            params: safeQuery,
+            withCredentials: true 
+        });
+        
+        return response.data;
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
+        console.error("Error fetching searched projects:", error);
     }
-    catch(err){
-        console.log(err)
-    }
-}
+};
 
 export const updateProject = async (id: string, projectData: CreateProjectType) => {
     try {
         const response = await axios.put(`${API_BASE_URL}/projects/${id}`, { ...projectData }, { withCredentials: true });  
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error("Create Project error:", error);
     }
 };
@@ -91,7 +134,11 @@ export const deleteProject = async (id: string) => {
              withCredentials: true 
         });
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error(`Delete Project ${id} error:`, error);
         throw error;
     }
@@ -107,38 +154,60 @@ export const createLead = async (data: CreateLeadType) => {
             { withCredentials: true }
         );  
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error("Create Lead error:", error);
     }
 };
 
-export const fetchAllLeads = async () => {
-    try{
-       const response = await axios.get(`${API_BASE_URL}/leads`, { withCredentials: true });  
-       return response.data; 
+export const fetchAllLeads = async (page: number, pageSize: number) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/leads`, {
+            params: {
+                page: page,
+                page_size: pageSize,
+            },
+            withCredentials: true,
+        });
+        return response.data; 
+    } catch (error) {
+        console.error("Fetch All Leads error:", error);
+        throw error;
     }
-    catch(err){
-        console.log(err)
-    }
-}
+};
 
 export const fetchLeadById = async (id: string) => {
     try{
        const response = await axios.get(`${API_BASE_URL}/leads/${id}`, { withCredentials: true });  
        return response.data; 
     }
-    catch(err){
-        console.log(err)
+    catch(error: any){
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
+        console.log(error)
     }
 }
 
 export const fetchSearchedLead = async (query: any) => {
     try{
-       const response = await axios.get(`${API_BASE_URL}/leads/search/${query}`, { withCredentials: true });  
+        const safeQuery = query && typeof query === 'object' ? query : {};
+        const response = await axios.get(`${API_BASE_URL}/leads/search`, { 
+        params: safeQuery,
+        withCredentials: true 
+    });  
        return response.data;
     }
-    catch(err){
-        console.log(err)
+    catch(error: any){
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
+        console.log(error)
     }
 }
 
@@ -146,7 +215,11 @@ export const updateLead = async (id: string, data: CreateLeadType) => {
     try {
         const response = await axios.put(`${API_BASE_URL}/leads/${id}`, { ...data }, { withCredentials: true });  
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error("Create Lead error:", error);
     }
 };
@@ -158,7 +231,11 @@ export const deleteLead = async (id: string) => {
              withCredentials: true 
         });
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error(`Delete Lead ${id} error:`, error);
         throw error;
     }
@@ -173,20 +250,40 @@ export const createTask = async ( data: CreateTaskType) => {
             { withCredentials: true }
         );  
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
         console.error("Create Lead error:", error);
     }
 };
 
-export const fetchAllTasks = async () => {
-    try{
-       const response = await axios.get(`${API_BASE_URL}/tasks`, { withCredentials: true });  
-       return response.data; 
+export const fetchAllTasks = async (page: number, pageSize: number) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/tasks`, {
+            params: {
+                page: page,
+                page_size: pageSize,
+            },
+            withCredentials: true,
+        });
+        console.log("tasls frontend", response.data)
+        const rawTaskArray = response.data; 
+        const totalItems = rawTaskArray.length; 
+        
+        return {
+            data: rawTaskArray, 
+            page: page,
+            page_size: pageSize,
+            total: totalItems, 
+            total_pages: 1, 
+        }; 
+    } catch (error) {
+        console.error("Fetch All Leads error:", error);
+        throw error;
     }
-    catch(err){
-        console.log(err)
-    }
-}
+};
 
 export const fetchTaskById = async (id: string) => {
     try{
@@ -282,3 +379,7 @@ export const deleteOrg = async (id: string) => {
         console.error("Create Task error:", error);
     }
 };
+
+
+
+

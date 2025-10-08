@@ -5,7 +5,7 @@ import { checkAccess } from "../middlerware/checkAccess.js";
 const router = Router();
 
 router.post("/", checkAccess('project.create', 'project'), createProject);
-router.get("/", getAllProjects);
+router.get("/",checkAccess('project.view', 'project'),  getAllProjects);
 router.get('/search', getSearchedProject)
 router.get("/:id", getProjectById);
 router.put("/:id", updateProject);
