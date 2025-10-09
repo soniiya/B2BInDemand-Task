@@ -100,11 +100,14 @@ For Org: Acme Corp
 
 & for these Users: 
 superadmin@acme.test / Passw0rd! (SuperAdmin)
+
 admin@acme.test / Passw0rd! (Admin)
+
 manager@acme.test / Passw0rd! (Manager)
+
 agent@acme.test / Passw0rd! (Agent)
+
 auditor@acme.test / Passw0rd! (Auditor)
-50 leads, 5 projects, 40 tasks distributed by role.
 
 Bash 
 
