@@ -100,6 +100,8 @@ Bash
 
 npm run seed
 
+
+# 7. Demontrations
 Demonstrates the user being blocked from a resource they lack permission for (logged in as Agent) becaue Agent doesn't have 'project.create' permission.
 
 ![Main Dashboard View](screenshots/forbiddenPage.png)
