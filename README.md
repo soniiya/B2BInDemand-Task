@@ -93,7 +93,7 @@ Bash
 npm run dev
 
 
-# Run Seed script
+# 6. Run Seed script
 Run this command to insert seed data into db.
 
 Bash 
