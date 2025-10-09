@@ -99,6 +99,7 @@ Run this command to insert seed data into db.
 For Org: Acme Corp
 
 & for these Users: 
+
 superadmin@acme.test / Passw0rd! (SuperAdmin)
 
 admin@acme.test / Passw0rd! (Admin)
