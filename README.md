@@ -1,4 +1,4 @@
-# Project Management Dashboard (Full Stack)
+# RBAC Mini‐CRM/PMS (React + Node.js)
 
 # Overview
 
@@ -8,7 +8,7 @@ This is a modern, full-stack web application designed for managing projects, tas
 
 User Authentication: Secure login and session management using cookies and credentials.
 Project Management (CRUD): Full Create, Read, Update, and Delete functionality for projects.
-Dynamic Dashboard: Real-time calculation and display of key performance indicators (KPIs) like Total Leads, Active Projects, and Tasks Today.
+Dynamic Dashboard: Real-time calculation and display of key performance indicators (KPIs) like Total Leads, Active Projects, and Tasks Today with Pagination and search filter.
 Responsive UI: Built with Tailwind CSS for a modern, mobile-friendly interface.
 State Management: Optimized client-side state handling using React Hooks (useState, useEffect, useCallback).
 
@@ -96,10 +96,26 @@ npm run dev
 # 6. Run Seed script
 Run this command to insert seed data into db.
 
+For Org: Acme Corp
+
+& for these Users: 
+
+superadmin@acme.test / Passw0rd! (SuperAdmin)
+
+admin@acme.test / Passw0rd! (Admin)
+
+manager@acme.test / Passw0rd! (Manager)
+
+agent@acme.test / Passw0rd! (Agent)
+
+auditor@acme.test / Passw0rd! (Auditor)
+
 Bash 
 
 npm run seed
 
+
+# 7. Demontrations
 Demonstrates the user being blocked from a resource they lack permission for (logged in as Agent) becaue Agent doesn't have 'project.create' permission.
 
 ![Main Dashboard View](screenshots/forbiddenPage.png)
