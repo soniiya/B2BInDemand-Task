@@ -1,4 +1,4 @@
-# Project Management Dashboard (Full Stack)
+# RBAC Mini‐CRM/PMS (React + Node.js)
 
 # Overview
 
@@ -8,7 +8,7 @@ This is a modern, full-stack web application designed for managing projects, tas
 
 User Authentication: Secure login and session management using cookies and credentials.
 Project Management (CRUD): Full Create, Read, Update, and Delete functionality for projects.
-Dynamic Dashboard: Real-time calculation and display of key performance indicators (KPIs) like Total Leads, Active Projects, and Tasks Today.
+Dynamic Dashboard: Real-time calculation and display of key performance indicators (KPIs) like Total Leads, Active Projects, and Tasks Today with Pagination and search filter.
 Responsive UI: Built with Tailwind CSS for a modern, mobile-friendly interface.
 State Management: Optimized client-side state handling using React Hooks (useState, useEffect, useCallback).
 
