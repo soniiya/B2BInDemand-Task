@@ -113,17 +113,16 @@ Shows the server-side console log confirming the checkAccess middleware received
 
 
 
+This image shows the main dashboard after login.
 
 ![Main Dashboard View](screenshots/login.png)
 
-This image shows the main dashboard after login.
 
 
-
-
-![Main Dashboard View](screenshots/task.png)
 
 Create Tasks/Projects/Leads if user is authenticated and autherized.
+
+![Main Dashboard View](screenshots/task.png)
 
 
 "Thank you so much"
