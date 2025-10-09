@@ -173,7 +173,6 @@ export const fetchAllLeads = async (page: number, pageSize: number) => {
             },
             withCredentials: true,
         });
-        console.log("frontend leads", response.data)
         return response.data; 
     } catch (error) {
         console.error("Fetch All Leads error:", error);
@@ -198,10 +197,12 @@ export const fetchLeadById = async (id: string) => {
 export const fetchSearchedLead = async (query: any) => {
     try{
         const safeQuery = query && typeof query === 'object' ? query : {};
+        console.log("safe query", safeQuery)
         const response = await axios.get(`${API_BASE_URL}/leads/search`, { 
         params: safeQuery,
         withCredentials: true 
-    });  
+        });  
+        console.log("search res", response.data)
        return response.data;
     }
     catch(error: any){

@@ -34,10 +34,6 @@ export const removeProjectService = async (id: string) => {
   return await Project.findByIdAndDelete(id)
 }
 
-// export const getProjectByIdService = async (id: string) => {
-//   return await Project.findById(id)
-// }
-
 export const listProjectsService = async (filters: any) => {
   const query: Record<string, any> = {};
 
@@ -51,6 +47,7 @@ export const listProjectsService = async (filters: any) => {
   if (name.length > 0) {
     query.name = { $regex: name, $options: "i" };
   }
+  
   if (filters.updatedAfter || filters.updatedBefore) {
     query.updatedAt = {};
 

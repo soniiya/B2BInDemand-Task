@@ -4,7 +4,6 @@ import { Request, Response } from "express";
 export const createOrganizations = async (req: Request, res: Response) => {
   try {
       const {data} = req.body
-      console.log("req body", req.body)
       const newOrg = await organizationService.createOrgService(data);
       res.status(201).json(newOrg);
     } catch (err: any) {
@@ -23,15 +22,6 @@ export const getOrgById = async (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-// export const getAllOrganizations = async (req: Request, res: Response) => {
-//   try {
-//     const orgs = await organizationService.getAllOrgService(); 
-//     res.json(orgs);
-//   } catch (err: any) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 export const getAllOrgs = async (req: Request, res: Response) => {
     try {

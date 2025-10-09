@@ -14,7 +14,7 @@ export interface CustomJwtPayload extends JwtPayload {
 
 const jwt_secret = process.env.JWT_SECRET  
 
-export const checkAccess = (requiredPermission: string, resourceType: 'lead' | 'project'| 'task') => 
+export const checkAccess = (requiredPermission: string, resourceType: 'lead' | 'project'| 'task' | 'org') => 
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => { 
      if(!jwt_secret) throw Error("jwt token not present")
      

@@ -20,17 +20,6 @@ export const createLead = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-
-// export const getAllLeads = async (req: Request, res: Response) => {
-//   try {
-//     const leads = await leadService.getAllLeadService(); 
-//     res.json(leads);
-//   } catch (err: any) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-
 export const getAllLeads = async (req: Request, res: Response) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
@@ -50,14 +39,19 @@ export const getAllLeads = async (req: Request, res: Response) => {
 export const getSearchedLead = async (req: Request, res: Response) => {
   try {
     const filters = {
-      status: req.query.status,
-      owner: req.query.owner,
-      source: req.query.source,
-      date: req.query.range,
-      updatedAfter: req.query.updatedAfter,
-      updatedBefore: req.query.updatedBefore,
+      title: req.query.title ? String(req.query.title) : "",
+      status: req.query.status ? String(req.query.status) : "",
+      owner: req.query.owner ? String(req.query.owner) : "",
+      source: req.query.source ? String(req.query.source) : "",
+      date: req.query.range ? String(req.query.date) : "",
+      updatedAfter: req.query.updatedAfter
+        ? String(req.query.updatedAfter)
+        : "",
+      updatedBefore: req.query.updatedBefore
+        ? String(req.query.updatedBefore)
+        : "",
     };
-
+    console.log("filters", filters)
     const Leads = await leadService.getSearchedLeadService(filters);
     res.json(Leads);
   } catch (err: any) {

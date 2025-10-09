@@ -27,8 +27,10 @@ export default function LeadsPage() {
   const [searchResults, setSearchResults] = useState<LeadType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [filters, setFilters] = useState({
-    name: "",
+    title: "",
     status: "",
+    owner: "",
+    source: "",
     updatedAfter: "",
     updatedBefore: "",
   });
@@ -54,13 +56,10 @@ export default function LeadsPage() {
   } = usePagination(fetchAllLeads);
 
   const getsearchedLeads = async () => {
-    // const query = new URLSearchParams(filters as any).toString();
     const res = await fetchSearchedLead(filters);
-    const data = await res.json();
-    setSearchResults(data);
+    setSearchResults(res);
     setIsSearching(true);
     refetch();
-    //setLeads(data);
   };
 
   const displayLeads = isSearching ? searchResults : paginatedLeads;
@@ -255,22 +254,36 @@ export default function LeadsPage() {
           </button>
         </div>
 
-        {/* <div className="space-y-2 space-x-10 mt-10">
+        <div className="space-y-2 space-x-10 mt-10">
         <input
           placeholder="Filter by name"
-          value={filters.name}
-          onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+          value={filters.title}
+          onChange={(e) => setFilters({ ...filters, title: e.target.value })}
           className="pl-10 py-3 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
+
+        <select
+          value={filters.source}
+          onChange={(e) => setFilters({ ...filters, source: e.target.value })}
+        >
+          <option value="email">Email</option>
+          <option value="web">Web</option>
+          <option value="phone">Phone</option>
+          <option value="referral">Referral</option>
+          <option value="other">Other</option>
+        </select>
+
         <select
           value={filters.status}
           onChange={(e) => setFilters({ ...filters, status: e.target.value })}
         >
           <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
+          <option value="new">New</option>
+          <option value="qualified">Qualified</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
         </select>
+
         <input
           type="date"
           onChange={(e) =>
@@ -289,7 +302,7 @@ export default function LeadsPage() {
         >
           Apply Filters
         </button>
-      </div>  */}
+      </div> 
       </div>
 
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">

@@ -5,8 +5,6 @@ export const createLeadService = async (leadPayload: any) => {
 };
 
 export const getAllLeadService = async (page: number, pageSize: number) => {
-  //return await Lead.find()
-
   const skip = (page - 1) * pageSize;
   
       const total = await Lead.countDocuments({});
@@ -44,26 +42,42 @@ export const updateLeadService = async (LeadId: string, data: any) => {
 export const getSearchedLeadService = async (filters: any) => {
   const query: Record<string, any> = {};
 
-  if (filters.status) {
-    query.status = filters.status;
+  const name = filters.title.trim();  
+  if (name.length > 0) {
+    query.title = { $regex: name, $options: "i" };
   }
 
-   if (filters.source) {
-    query.source = filters.source;
+  const status = filters.status.trim();  
+  if (status.length > 0) {
+    query.status = status;
+    query.status = status.toLowerCase();
   }
 
-  if (filters.owner) {
-    query.name = { $regex: filters.owner, $options: "i" };
+  const source = filters.source.trim()
+   if (source.length > 0) {
+    query.source = source;
+  }
+
+  const owner = filters.owner.trim()
+  if (owner.length > 0) {
+    query.name = { $regex: owner, $options: "i" };
   }
   if (filters.updatedAfter || filters.updatedBefore) {
     query.updatedAt = {};
-    if (filters.updatedAfter) {
-      query.updatedAt.$gte = new Date(filters.updatedAfter);
+
+    const updatedAfterStr = String(filters.updatedAfter).trim();
+    if (updatedAfterStr) {
+      query.updatedAt.$gte = new Date(updatedAfterStr);
     }
-    if (filters.updatedBefore) {
-      query.updatedAt.$lte = new Date(filters.updatedBefore);
+
+    const updatedBeforeStr = String(filters.updatedBefore).trim();
+    if (updatedBeforeStr) {
+      query.updatedAt.$lte = new Date(updatedBeforeStr);
     }
   }
+
+    console.log("filter query", query)
+
 
   return await Lead.find(query).sort({ updatedAt: -1 });
 };
