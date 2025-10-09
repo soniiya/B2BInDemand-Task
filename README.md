@@ -102,7 +102,9 @@ npm run seed
 
 Demonstrates the user being blocked from a resource they lack permission for.
 
-![Main Dashboard View](screenshots/forbiddenPage.png)
+![Main Dashboard View](screenshots/forbiddenAgent.png)
+
+
 
 
 Shows the server-side console log confirming the checkAccess middleware received the user's permissions from the JWT.
@@ -110,15 +112,17 @@ Shows the server-side console log confirming the checkAccess middleware received
 ![Main Dashboard View](screenshots/consoleLog.png)
 
 
-An example of a restricted user (e.g., Agent) attempting an action (e.g.,viewing task lists) and being denied.
 
-![Main Dashboard View](screenshots/forbiddenAgent.png)
+An example of a restricted user (e.g., Auditor) attempting an action to create/update/delete (projects/leads/tasks) and being denied because he only have 'view' permission.
+
+![Main Dashboard View](screenshots/forbiddenPage.png)
 
 
 
 The user object passed to the middleware, showing the roleName and userId used for authorization checks.
 
 ![Main Dashboard View](screenshots/consoleUser.png)
+
 
 
 ![Main Dashboard View](screenshots/login.png)
