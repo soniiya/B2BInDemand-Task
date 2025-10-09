@@ -100,9 +100,9 @@ Bash
 
 npm run seed
 
-Demonstrates the user being blocked from a resource they lack permission for.
+Demonstrates the user being blocked from a resource they lack permission for (logged in as Agent) becaue Agent doesn't have 'project.create' permission.
 
-![Main Dashboard View](screenshots/forbiddenAgent.png)
+![Main Dashboard View](screenshots/forbiddenPage.png)
 
 
 
@@ -111,17 +111,6 @@ Shows the server-side console log confirming the checkAccess middleware received
 
 ![Main Dashboard View](screenshots/consoleLog.png)
 
-
-
-An example of a restricted user (e.g., Auditor) attempting an action to create/update/delete (projects/leads/tasks) and being denied because he only have 'view' permission.
-
-![Main Dashboard View](screenshots/forbiddenPage.png)
-
-
-
-The user object passed to the middleware, showing the roleName and userId used for authorization checks.
-
-![Main Dashboard View](screenshots/consoleUser.png)
 
 
 

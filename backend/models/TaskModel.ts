@@ -9,11 +9,11 @@ const TaskSchema = new Schema(
     priority: { type: String, enum: ["low", "medium", "high"], default: "medium" },
     assignee_user_id: { type: Schema.Types.ObjectId, ref: "User" },
     due_date: { type: Date },
-    // owner_id: { 
-    //     type: mongoose.Schema.Types.ObjectId, 
-    //     ref: 'User', 
-    //     required: true 
-    // },
+    owner_id: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
+    },
   },
   { 
     timestamps: true,

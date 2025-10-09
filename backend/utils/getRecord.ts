@@ -18,6 +18,8 @@ export const getRecord = async (
 
     try {
         const record = await Model.findById(id).select('owner_id'); 
+        console.log("recorerd getrecord", record
+        )
         return record;
 
     } catch (error) {

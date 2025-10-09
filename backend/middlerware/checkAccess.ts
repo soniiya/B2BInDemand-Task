@@ -30,11 +30,7 @@ export const checkAccess = (requiredPermission: string, resourceType: 'lead' | '
     }
 
     const user = decoded as CustomJwtPayload;
-
     req.user = user; 
-    console.log("middleware user", user);
-    console.log("rolename", user.roleName);
-
     const recordId = req.params.id; 
 
     if (!user) {
@@ -53,12 +49,19 @@ export const checkAccess = (requiredPermission: string, resourceType: 'lead' | '
     const isRecordAction = requiredPermission.endsWith('.update') || requiredPermission.endsWith('.delete');
 
     if (isRecordAction || requiredPermission.endsWith('.view')) {
+        if (!recordId) {
+            console.log(`[AUTH BYPASS] Collection route (${requiredPermission}). Proceeding to controller.`);
+            return next();
+        }
         
         if (user.roleName === 'Admin' || user.roleName === 'Auditor' || user.roleName === 'Manager') {
             return next();
         }
         
         const record = await getRecord(resourceType, recordId); 
+
+        console.log("resourceType", resourceType)
+        console.log("record", record)
 
         if (!record) {
             return res.status(404).json({ message: `Resource not found or inaccessible.` });
