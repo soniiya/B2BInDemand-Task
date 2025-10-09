@@ -74,12 +74,17 @@ export const loginController = async (req: Request, res: Response): Promise<void
         updateLastLogin(user);
 
         const userRole: RoleType = user.role_id; 
-        console.log("user role", userRole)
+        const permissionNames: string[] = userRole.permissions.map(
+            (perm: any) => perm.name 
+        );
+        
+        console.log("Permissions in JWT Payload:", permissionNames);
+
 
         const jwtPayload = {
             userId: user._id.toString(),
             roleName: userRole.name,            
-            permissions: userRole.permissions,   
+            permissions: permissionNames,   
         };
 
         issueTokenAndSetCookie(res, jwtPayload as any);
@@ -90,7 +95,7 @@ export const loginController = async (req: Request, res: Response): Promise<void
                 id: user._id,
                 email: user.email,
                 roleName: userRole.name,
-                permissions: userRole.permissions, 
+                permissions: permissionNames, 
             }
         });
 

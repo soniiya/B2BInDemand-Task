@@ -24,9 +24,9 @@ export const signUp = async (payload: SignUpPayload): Promise<PopulatedUser | nu
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        const superAdminRole = await Role.findOne({ name: 'SuperAdmin' });
+        const AdminRole = await Role.findOne({ name: 'Admin' });
 
-        if (!superAdminRole) {
+        if (!AdminRole) {
         throw new Error("Default role 'SuperAdmin' not found.");
         }
 
@@ -34,7 +34,7 @@ export const signUp = async (payload: SignUpPayload): Promise<PopulatedUser | nu
             name,
             email,
             passwordHash: passwordHash, 
-            role_id: superAdminRole._id
+            role_id: AdminRole._id
         });
         
         const savedUser = await newUser.save();
@@ -53,7 +53,11 @@ export const getUserByEmailWithHash = async (email: string): Promise<PopulatedUs
     try {
         const user = await User.findOne({ email }).select('+passwordHash').populate({
                 path: 'role_id', 
-                select: 'name permissions' 
+                select: 'name permissions' ,
+                populate: {
+                    path: 'permissions',
+                    select: 'name' 
+                }
             });;
         return user as PopulatedUser | null;
     } catch (error) {

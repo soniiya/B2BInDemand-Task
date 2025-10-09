@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec node --loader ts-node/esm index.ts",
+    "seed":"node --loader ts-node/esm seed.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

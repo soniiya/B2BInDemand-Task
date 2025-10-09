@@ -71,6 +71,7 @@ export const fetchAllProjects = async (page: number, pageSize: number) => {
                 page_size: pageSize,
             },
         withCredentials: true });  
+        console.log("frotend projects", response.data)
        return response.data; 
     }
     catch(error: any){
@@ -172,6 +173,7 @@ export const fetchAllLeads = async (page: number, pageSize: number) => {
             },
             withCredentials: true,
         });
+        console.log("frontend leads", response.data)
         return response.data; 
     } catch (error) {
         console.error("Fetch All Leads error:", error);
@@ -249,7 +251,8 @@ export const createTask = async ( data: CreateTaskType) => {
         const response = await axios.post(`${API_BASE_URL}/tasks`, { data }, 
             { withCredentials: true }
         );  
-        return response.data;
+        console.log("create task", response.data)
+        return response.data.data;
     } catch (error: any) {
          if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
             alert(error.response.data.message);
@@ -267,18 +270,9 @@ export const fetchAllTasks = async (page: number, pageSize: number) => {
                 page_size: pageSize,
             },
             withCredentials: true,
-        });
-        console.log("tasls frontend", response.data)
-        const rawTaskArray = response.data; 
-        const totalItems = rawTaskArray.length; 
+        }); 
         
-        return {
-            data: rawTaskArray, 
-            page: page,
-            page_size: pageSize,
-            total: totalItems, 
-            total_pages: 1, 
-        }; 
+        return response.data
     } catch (error) {
         console.error("Fetch All Leads error:", error);
         throw error;
@@ -288,7 +282,6 @@ export const fetchAllTasks = async (page: number, pageSize: number) => {
 export const fetchTaskById = async (id: string) => {
     try{
        const response = await axios.get(`${API_BASE_URL}/tasks/${id}`, { withCredentials: true });  
-       console.log("api response", response.data)
        return response.data; 
     }
     catch(err){
@@ -352,13 +345,23 @@ export const fetchOrgById = async (id: string) => {
     }
 }
 
-export const fetchAllOrgs = async () => {
+export const fetchAllOrgs = async (page: number, pageSize: number) => {
     try{
-       const response = await axios.get(`${API_BASE_URL}/orgs`, { withCredentials: true });  
+       const response = await axios.get(`${API_BASE_URL}/orgs`, {
+        params: {
+                page: page,
+                page_size: pageSize,
+            },
+        withCredentials: true });  
+        console.log("frotend orgs", response.data)
        return response.data; 
     }
-    catch(err){
-        console.log(err)
+    catch(error: any){
+         if (error.response && error.response.status === 401 && error.response.data.code === 'TOKEN_EXPIRED') {
+            alert(error.response.data.message);
+            // Redirect or handle logout
+        }
+        console.log(error)
     }
 }
 

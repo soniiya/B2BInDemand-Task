@@ -2,7 +2,7 @@ import mongoose, {Schema} from "mongoose";
 
 const RoleSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true }, 
-    permissions: [{ type: String, required: true }], 
+    permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Permission' }], 
     is_admin: { type: Boolean, default: false } 
 });
 

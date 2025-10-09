@@ -13,6 +13,8 @@ import {
   getStatusColor,
 } from "../../lib/utils";
 import { CreateOrgType, OrgStatusType, OrgType } from "@/app/lib/type";
+import Pagination from "@/app/components/Pagination/page";
+import { usePagination } from "@/app/hooks/usePagination";
 
 export default function Orgs() {
   const [Orgs, setOrgs] = useState<OrgType[]>([]);
@@ -26,35 +28,32 @@ export default function Orgs() {
     status: "active",
   });
 
-  const getAllOrgs = useCallback(async () => {
-    try {
-      const res = await fetchAllOrgs();
-      setOrgs(res);
-    } catch (error) {
-      console.error("Failed to fetch Orgs:", error);
-    }
-  }, [setOrgs]);
+  const [filters, setFilters] = useState({
+    name: "",
+    status: "",
+    domain: "",
+    updatedAfter: "",
+    updatedBefore: "",
+  });
 
-  useEffect(() => {
-    getAllOrgs();
-  }, [getAllOrgs]);
+  const [searchResults, setSearchResults] = useState<OrgType[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const {
+    data: paginatedOrgs,
+    refetch,
+    pagination,
+    isLoading,
+    handlePageChange,
+  } = usePagination(fetchAllOrgs);
+
+  const displayOrgs = isSearching ? searchResults : paginatedOrgs;
 
   const handlecreateOrg = async () => {
-    const res = await createOrg(newOrg);
-    setOrgs((prev) => [res, ...prev]);
-    setNewOrg({ name: "", domain: "", status: "active" });
+    await createOrg(newOrg);
+    refetch();
     alert("organization created");
   };
-
-  // const handleEdit = (id: string) => {
-  //   const orgToEdit = organizations.find((org) => org._id === id);
-  //   if (orgToEdit) {
-  //     setEditingOrg(orgToEdit as OrgType);
-  //     setEditingId(id);
-  //   } else {
-  //     console.error(`Organization with ID ${id} not found.`);
-  //   }
-  // };
 
   const handleEdit = async (id: string) => {
     const res = await fetchOrgById(id);
@@ -72,11 +71,8 @@ export default function Orgs() {
         domain: editingOrg.domain,
       };
 
-      const updatedOrgs = await updateOrg(editingId, payload);
-
-      setOrgs((prev) =>
-        prev.map((org) => (org._id === editingId ? updatedOrgs : org))
-      );
+      await updateOrg(editingId, payload);
+      refetch();
 
       setEditingId(null);
       setEditingOrg(null);
@@ -91,7 +87,8 @@ export default function Orgs() {
     }
     try {
       await deleteOrg(id);
-      setOrgs((prev) => prev.filter((org) => org._id !== id));
+      // setOrgs((prev) => prev.filter((org) => org._id !== id));
+      refetch();
       setEditingId(null);
       setEditingOrg(null);
     } catch (error) {
@@ -180,7 +177,7 @@ export default function Orgs() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Orgs?.map((p: any) => (
+              {displayOrgs?.map((p: any) => (
                 <tr
                   key={p._id}
                   className="hover:bg-indigo-50 transition duration-150"
@@ -295,6 +292,15 @@ export default function Orgs() {
               ))}
             </tbody>
           </table>
+
+          <Pagination
+            page={pagination.page}
+            pageSize={pagination.page_size}
+            total={pagination.total}
+            totalPages={pagination.total_pages}
+            onPageChange={handlePageChange}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </>

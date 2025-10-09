@@ -6,9 +6,9 @@ const router = Router();
 
 router.post("/", checkAccess('project.create', 'project'), createProject);
 router.get("/",checkAccess('project.view', 'project'),  getAllProjects);
-router.get('/search', getSearchedProject)
-router.get("/:id", getProjectById);
-router.put("/:id", updateProject);
-router.delete("/:id", removeProject);
+router.get('/search', checkAccess('project.view', 'project'), getSearchedProject)
+router.get("/:id", checkAccess('project.view', 'project'), getProjectById);
+router.put("/:id", checkAccess('project.update', 'project'), updateProject);
+router.delete("/:id",checkAccess('project.delete', 'project'), removeProject);
 
 export default router;

@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 
 export const createTask = async (req: Request, res: Response) => {
   try {
+    const {data} = req.body
     const task = await taskservice.createTaskService(req.body);
     res.status(201).json(task);
   } catch (err: any) {
@@ -20,7 +21,6 @@ export const getAllTasks = async (req: Request, res: Response) => {
         const safePageSize = Math.max(1, pageSize);
 
         const result = await taskservice.getAllTasksService(safePage, safePageSize);
-        console.log("task result", result)
         res.json(result);
     } catch (err: any) {
         res.status(500).json({ error: err.message });

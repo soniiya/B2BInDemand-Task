@@ -1,11 +1,29 @@
 import { Organization } from "../models/OrganizationModel.js";
+import { PaginatedResult } from "../types/Common.js";
 
 export const createOrgService = async (data: any) => {
   return await Organization.create(data)
 }
 
-export const getAllOrgService = async () => {
-  return await Organization.find();
+export const getAllOrgsService = async (page: number, pageSize: number): Promise<PaginatedResult<any>> => {
+    const skip = (page - 1) * pageSize;
+
+    const total = await Organization.countDocuments({});
+
+    const Orgs = await Organization.find({})
+        .limit(pageSize) 
+        .skip(skip)      
+        .sort({ createdAt: -1 }); 
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+        data: Orgs,
+        page: page,
+        page_size: pageSize,
+        total: total,
+        total_pages: totalPages,
+    };
 };
 
 export const getOrgByIdService = async (id: string) => {

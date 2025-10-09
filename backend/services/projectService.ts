@@ -21,8 +21,6 @@ export const getAllProjectsService = async (page: number, pageSize: number): Pro
         .sort({ createdAt: -1 }); 
 
     const totalPages = Math.ceil(total / pageSize);
-
-     console.log("prorojectss", projects)
     return {
         data: projects,
         page: page,

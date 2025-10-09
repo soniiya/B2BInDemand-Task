@@ -36,13 +36,6 @@ const getRandomChange = () => {
     return `${sign}${value}%`;
 };
 
-type MetricsData = {
-    leads: any[];
-    projects: any[];
-    tasks: any[];
-    orgs: any[]
-}
-
 export const useDashboardMetrics = () => {
     const [data, setData] = useState<CombinedMetrics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -90,7 +83,9 @@ export const useDashboardMetrics = () => {
         const totalLeadsCount = data.leads.total;
         const activeProjectsCount = data.projects.data.filter(p => p.status === 'active').length;
         const tasksTodayCount = data.tasks.data.filter(t => t.status === 'todo').length;
-        const activeOrgs = data.orgs.total; 
+        const totalOrgs = data.orgs.total
+
+        console.log("active orgs", totalOrgs)
 
         const totalLeadsStat: StatItem = {
             name: "Total Leads",
@@ -117,8 +112,8 @@ export const useDashboardMetrics = () => {
         };
 
         const activeOrgsStat: StatItem = {
-            name: "Active Organizations",
-            value: activeOrgs.toString(),
+            name: "Total Organizations",
+            value: totalOrgs.toString(),
             change: getRandomChange(), 
             icon: FolderKanban,
             color: "text-accent",

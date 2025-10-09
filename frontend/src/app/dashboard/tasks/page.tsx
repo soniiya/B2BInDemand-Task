@@ -49,7 +49,6 @@ export default function TasksPage() {
       handlePageChange,
     } = usePagination(fetchAllTasks);
 
-    console.log("paginated tasks" ,paginatedTasks)
     const displayTasks = isSearching ? searchResults : paginatedTasks;
 
    const getsearchedProjects = async () => {
@@ -57,17 +56,11 @@ export default function TasksPage() {
       const data = await fetchSearchedTask(filters);
       setSearchResults(data);
       setIsSearching(true);
-      // setProjects(data);
       refetch()
     };
 
   const handlecreateTask = async () => {
-    const res = await createTask(newTask);
-    //setTasks((prev) => [res, ...prev])
-    // setNewTask({title: "",
-    // description: "",
-    // priority: "medium",
-    // status: "todo",});
+    await createTask(newTask);
     refetch()
     alert("Task created")
   };

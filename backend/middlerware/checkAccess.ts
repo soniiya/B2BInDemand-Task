@@ -31,28 +31,30 @@ export const checkAccess = (requiredPermission: string, resourceType: 'lead' | '
 
     const user = decoded as CustomJwtPayload;
 
-    req.user = user;
-    console.log("middleware user", user)
-    console.log("rolename", user.roleName)
+    req.user = user; 
+    console.log("middleware user", user);
+    console.log("rolename", user.roleName);
 
     const recordId = req.params.id; 
 
     if (!user) {
         return res.status(401).json({ message: 'Authentication required.' });
     }    
+    
     if (user.roleName === 'SuperAdmin') {
         return next();
     }
     
-    if (!user.permissions.includes(requiredPermission)) {
+    if (!user.permissions || !user.permissions.includes(requiredPermission)) {
         console.warn(`[AUTH FAIL] User ${user.userId} missing permission: ${requiredPermission}`);
         return res.status(403).json({ message: 'Forbidden: Insufficient role permissions.' });
     }
-
+    
     const isRecordAction = requiredPermission.endsWith('.update') || requiredPermission.endsWith('.delete');
 
     if (isRecordAction || requiredPermission.endsWith('.view')) {
-        if (user.roleName === 'Admin' || user.roleName === 'Auditor') {
+        
+        if (user.roleName === 'Admin' || user.roleName === 'Auditor' || user.roleName === 'Manager') {
             return next();
         }
         
@@ -62,16 +64,13 @@ export const checkAccess = (requiredPermission: string, resourceType: 'lead' | '
             return res.status(404).json({ message: `Resource not found or inaccessible.` });
         }
         
-        if (user.roleName === 'Agent') {
-            if (record.owner_id.toString() !== user.userId) {
-                return res.status(403).json({ message: `Forbidden: Agents can only modify their assigned records.` });
-            }
+        if (record.owner_id.toString() !== user.userId) {
+            return res.status(403).json({ message: `Forbidden: You can only modify your assigned records.` });
         }
     }
     
     next();
 };
-
 
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.jwt || req.headers['authorization']?.split(' ')[1];

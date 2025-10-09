@@ -5,10 +5,6 @@ export const createTaskService = async (data: any) => {
   return await Task.create(data);
 };
 
-// export const getAllTasksService = async () => {
-//   return await Task.find()
-// }
-
 export const getAllTasksService = async (page: number, pageSize: number): Promise<PaginatedResult<any>> => {
     const skip = (page - 1) * pageSize;
 
@@ -21,7 +17,6 @@ export const getAllTasksService = async (page: number, pageSize: number): Promis
 
     const totalPages = Math.ceil(total / pageSize);
 
-    console.log("tasks", tasks)
     return {
         data: tasks,
         page: page,

@@ -7,6 +7,9 @@ import projectRoutes from './routes/projectRoutes.js';
 import taskRoutes from './routes/taskRoutes.js'
 import organizationRoutes from './routes/organizationRoutes.js'
 import leadRoutes from './routes/leadRoutes.js'
+import './models/UserModel.js'; 
+import './models/RoleSchema.js';
+import './models/Permissions.js'; 
 import cors from 'cors';
 
 dotenv.config();

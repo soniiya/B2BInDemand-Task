@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/", checkAccess('lead.create', 'lead'), createLead);
 router.get("/", checkAccess('lead.view', 'lead'), getAllLeads);
-router.get('/search', getSearchedLead)
+router.get('/search', checkAccess('lead.view', 'lead'), getSearchedLead)
 router.get("/:id", checkAccess('lead.view', 'lead'), getLeadById);
 router.put("/:id", checkAccess('lead.update', 'lead'), updateLead);
 router.delete("/:id",checkAccess('lead.remove', 'lead'),  removeLead);

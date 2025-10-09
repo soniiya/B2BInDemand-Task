@@ -51,7 +51,6 @@ export default function Projects() {
     const data = await fetchSearchedProject(filters);
     setSearchResults(data);
     setIsSearching(true);
-    // setProjects(data);
     refetch()
   };
 
@@ -112,8 +111,8 @@ export default function Projects() {
     try {
       await deleteProject(id);
       refetch();
-      // setEditingId(null);
-      // setEditingProject(null);
+      setEditingId(null);
+      setEditingProject(null);
     } catch (error) {
       console.error("Failed to delete project:", error);
     }
