@@ -45,7 +45,7 @@ async function seedRBAC() {
   const seededPermissions = await Permission.insertMany(permissionDocs);
   console.log(
     `[SEED DIAGNOSTIC] Seeded ${seededPermissions.length} permissions.`
-  ); // 👈 Check this!
+  ); 
 
   const permissionMap = new Map(seededPermissions.map((p) => [p.name, p._id]));
 
@@ -55,7 +55,7 @@ async function seedRBAC() {
   const seededRoles = [];
   console.log(
     `[SEED DIAGNOSTIC] Attempting to seed ${seededRoles.length} roles.`
-  ); // 👈 Check this!
+  ); 
 
   for (const roleDef of rolesData) {
     const permissionIds = roleDef.permissions
@@ -72,7 +72,7 @@ async function seedRBAC() {
   const roleMap = new Map(seededRoles.map((r) => [r.name, r._id]));
   console.log("Seeded Roles and Permissions.");
 
-  // 4. Seed Users
+
   const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 10);
   const userPromises = demoUsers
     .map((user) => {
@@ -101,24 +101,3 @@ async function seedRBAC() {
 
 main()
 
-// async function seedRoles() {
-//     await connectDB();
-
-//     try {
-//         console.log('Starting role seeding...');
-//         const result = await Role.insertMany(rolesData, { ordered: false });
-
-//         console.log(`Successfully seeded ${result.length} roles.`);
-
-//     } catch (error: any) {
-//         if (error.code === 11000) {
-//              console.log("Roles already exist in the database. Seeding skipped.");
-//         } else {
-//              console.error("Error during role seeding:", error);
-//         }
-//     } finally {
-//         mongoose.connection.close();
-//     }
-// }
-
-// seedRoles();
