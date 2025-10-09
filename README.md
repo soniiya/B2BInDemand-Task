@@ -93,6 +93,33 @@ Bash
 npm run dev
 
 
+# Run Seed script
+Run this command to insert seed data into db.
+
+Bash 
+
+npm run seed
+
+Demonstrates the user being blocked from a resource they lack permission for.
+
+![Main Dashboard View](screenshots/forbiddenPage.png)
+
+
+Shows the server-side console log confirming the checkAccess middleware received the user's permissions from the JWT.
+
+![Main Dashboard View](screenshots/consoleLog.png)
+
+
+An example of a restricted user (e.g., Agent) attempting an action (e.g.,viewing task lists) and being denied.
+
+![Main Dashboard View](screenshots/forbiddenAgent.png)
+
+
+
+The user object passed to the middleware, showing the roleName and userId used for authorization checks.
+
+![Main Dashboard View](screenshots/consoleUser.png)
+
 
 ![Main Dashboard View](screenshots/login.png)
 
